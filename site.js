@@ -42,7 +42,7 @@
 	}
 
 	// ---------- logo（logo.svg 里的内容直接放进页面，页脚可以变白） ----------
-	const LOGO = `<svg class="logo-svg" viewBox="48 20 112 34" role="img" aria-label="${esc(S.name)}"><text x="50" y="51.06" font-size="35.94" letter-spacing="-1.08">Hazel.</text><text x="139.8" y="32.5" font-size="10.41">tao</text><ellipse cx="147.5" cy="29.63" rx="10.4" ry="6.8" fill="none" stroke="currentColor" stroke-width=".6"/></svg>`;
+	const LOGO = `<svg class="logo-svg" viewBox="48 20 114 34" role="img" aria-label="${esc(S.name)}"><text x="50" y="51.06" font-size="35.94" letter-spacing="-1.08">Hazel.</text><text x="142.7" y="32.5" font-size="10.41">tao</text><ellipse cx="150.4" cy="29.63" rx="10.4" ry="6.8" fill="none" stroke="currentColor" stroke-width=".6"/></svg>`;
 
 	// ---------- 页头 + 黄色全屏菜单 ----------
 	const menuLinks = [
@@ -52,7 +52,7 @@
 	];
 	$('.site-header').innerHTML = `
 		<a class="logo" href="index.html">${LOGO}</a>
-		<p class="tagline">graphic.<br>design.<br>point.</p>
+		<p class="tagline">curiosity.<br>organic.<br>expressive.</p>
 		<button class="menu-btn" aria-expanded="false" aria-controls="menu">Menu.</button>
 	`;
 	const menu = document.createElement('div');
@@ -83,7 +83,7 @@
 	// ---------- 页脚（黑色） ----------
 	$('.site-footer').innerHTML = `
 		<div class="footer-top">
-			<p class="footer-tag">graphic.<br>design.<br>point.</p>
+			<p class="footer-tag">curiosity.<br>organic.<br>expressive.</p>
 			<div class="footer-info">
 				<p><a href="mailto:${S.email}">${esc(S.email)}</a><br><a href="https://www.instagram.com/${S.instagram}/" target="_blank" rel="noopener">Instagram.</a></p>
 				<p class="grey">${S.now.map(esc).join('<br>')}</p>
