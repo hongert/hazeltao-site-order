@@ -148,7 +148,7 @@ window.PROJECTS = [
 		services: ['Calendar', 'Illustration', 'Print Design'],
 		format: '',
 		cover: 'Huaying_main.png',
-		media: ['Huaying_main.png', 'FINALp1.jpg', 'FINALp2-03.png', 'FINALp2-04.png'],
+		media: ['Huaying_main.png', 'FINALp2-03.png', 'FINALp2-04.png'],
 		text: [
 			'<i>Huaying’s Recipe</i> is a project that deeply personal tribute to my grandmother and the cherished memories of cooking with her throughout my childhood. Inspired by the calendar she kept on her living room wall, I created a functional and decorative gift that reflects both my love for her and my growth as a designer. Each month features a dish from her recipes, thoughtfully paired with seasonal ingredients or traditional celebrations. The calendar is accordion-bound to enhance display and accessibility, with each month spanning two pages: one showcasing a stylized serving dish illustration, and the other presenting the month’s dates and festivals.',
 		],
@@ -176,7 +176,7 @@ window.PROJECTS = [
 		services: ['Branding', 'Spatial'],
 		format: '',
 		cover: 'Serenseek_main.png',
-		media: ['Serenseek_main.png', 'FINALp1.jpeg', 'FINALp4-2.jpg', 'FINALp3.jpg', 'FINALpg5.jpg'],
+		media: ['Serenseek_main.png', 'FINALp4-2.jpg', 'FINALp3.jpg', 'FINALpg5.jpg'],
 		text: [
 			'<i>‘Serenseek’</i> is a branding project centered around the concept of seeking truth and inner peace. The teahouse offers a tranquil escape from the chaos of city life, inviting visitors to reconnect with themselves and embrace a simpler, more mindful way of living. From the visual identity to the spatial atmosphere, every design element aims to transport guests into a serene, calming environment that nurtures introspection and authenticity.',
 		],
@@ -189,8 +189,8 @@ window.PROJECTS = [
 		tags: ['Identity'],
 		services: ['Branding', 'Identity System'],
 		format: '',
-		cover: 'FINALp1-2.jpeg',
-		media: ['FINALp1-2.jpeg', 'FINALp3-2.jpg', 'FINALp4.jpeg'],
+		cover: 'Wuzhen_flag_display.png',
+		media: ['Wuzhen_flag_display.png', 'FINALp3-2.jpg', 'FINALp4.jpeg'],
 		text: [
 			'This branding project reimagines the visual identity of the Wuzhen Theatre Festival, an international celebration of performance and art held in the rapidly modernizing city of Wuzhen, China. As a native of the region, I was inspired to create a design system that reflects the city’s growing global presence and cultural vibrancy. Moving away from the outdated water-ink textures and muddled logo of past years, my new design embraces bold colors, simplified shapes, and theatrical motifs to capture the festival’s spirit of joy, openness, and creativity.',
 		],
