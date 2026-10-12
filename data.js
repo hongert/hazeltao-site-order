@@ -235,3 +235,11 @@ window.PROJECTS = [
 		],
 	},
 ];
+
+// 首页黑色区域 “Selected projects.” 里显示的项目和图片（image 留空就用 cover）
+window.FEATURED = [
+	{ slug: 'solserif', image: '' },
+	{ slug: 'sweetness-in-four-seasons', image: '' },
+	{ slug: 'held-still', image: 'HeldStill_Flag.jpg' },
+	{ slug: 'arboretum', image: 'Screenshot-2026-02-13-at-11.32.01AM.png' },
+];

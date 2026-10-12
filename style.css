@@ -156,12 +156,12 @@ ul { list-style: none; }
 .feat-text h3 a:hover { font-style: italic; }
 .feat-sub { color: var(--grey); padding-right: 20%; }
 .feat-text .pills { margin-top: 8px; }
-.feat-img { grid-column: 5 / 13; display: block; }
+.feat-img { grid-column: 5 / 13; display: block; background: var(--yellow); }
 .arch {
 	display: block;
 	aspect-ratio: 4 / 3;
 	overflow: hidden;
-	background: var(--yellow);
+	will-change: clip-path;
 }
 .arch img, .arch video { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
 .feat-img:hover .arch img, .feat-img:hover .arch video { transform: scale(1.05); }

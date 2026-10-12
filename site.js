@@ -42,7 +42,7 @@
 	}
 
 	// ---------- logo（logo.svg 里的内容直接放进页面，页脚可以变白） ----------
-	const LOGO = `<svg class="logo-svg" viewBox="48 20 126 34" role="img" aria-label="${esc(S.name)}"><text font-size="35.94" x="50.04" y="51.06">Hazel.</text><text font-size="10.41" x="154.5" y="32.5">tao</text><ellipse cx="162.24" cy="29.63" rx="9.79" ry="6.8" fill="none" stroke="currentColor" stroke-width=".6"/></svg>`;
+	const LOGO = `<svg class="logo-svg" viewBox="48 20 112 34" role="img" aria-label="${esc(S.name)}"><text x="50" y="51.06" font-size="35.94" letter-spacing="-1.08">Hazel.</text><text x="139.8" y="32.5" font-size="10.41">tao</text><ellipse cx="147.5" cy="29.63" rx="10.4" ry="6.8" fill="none" stroke="currentColor" stroke-width=".6"/></svg>`;
 
 	// ---------- 页头 + 黄色全屏菜单 ----------
 	const menuLinks = [
@@ -109,7 +109,9 @@
 
 	// ---------- 首页 ----------
 	function renderHome() {
-		const featured = P.slice(0, 4);
+		const featured = (window.FEATURED || P.slice(0, 4).map((p) => ({ slug: p.slug })))
+			.map((f) => { const p = P.find((x) => x.slug === f.slug); return p && { ...p, cover: f.image || p.cover }; })
+			.filter(Boolean);
 		main.innerHTML = `
 			<section class="hero">
 				<h1 class="t-xl words">${words(A.headline.replace(' | ', ' ').replace('Student', 'student'))}</h1>
@@ -134,16 +136,16 @@
 			</section>
 		`;
 
-		// 滚动时图片慢慢收成一个完整的圆形
-		const arches = $$('.feat-img .arch');
+		// 滚动时图片慢慢收成一个完整的圆，四周露出黄色
+		const arches = $$('.feat-img');
 		const onScroll = () => {
 			const vh = innerHeight;
 			arches.forEach((el) => {
 				const r = el.getBoundingClientRect();
-				const t = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.75)));
-				const side = Math.min(r.width, r.height);
-				const ix = t * (r.width - side) / 2, iy = t * (r.height - side) / 2;
-				el.style.clipPath = `inset(${iy.toFixed(1)}px ${ix.toFixed(1)}px round ${(t * side / 2).toFixed(1)}px)`;
+				const t = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height * 0.4)));
+				const full = Math.hypot(r.width, r.height) / 2; // 盖满整张图
+				const round = Math.min(r.width, r.height) / 2;  // 完整的圆
+				el.firstElementChild.style.clipPath = `circle(${(full - (full - round) * t).toFixed(1)}px at 50% 50%)`;
 			});
 		};
 		addEventListener('scroll', onScroll, { passive: true });
