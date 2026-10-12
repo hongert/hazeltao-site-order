@@ -1,10 +1,10 @@
-// ===== 整站的排版和交互：页头、首页作品流、Index 列表、项目页、About、页脚 =====
-// 一般不需要改这个文件：项目内容在 data.js，About 内容在 about.js
+// ===== 整站的排版和交互：页头 + 菜单、首页、Projects 列表、项目页、About、页脚、光标和滚动动画 =====
+// 一般不需要改这个文件：项目内容在 data.js，About 内容在 about.js，logo 在 logo.svg
 
 (() => {
 	const S = window.SITE;
 	const P = window.PROJECTS;
-	const A = window.ABOUT || { headline: '', sections: [] };
+	const A = window.ABOUT || { headline: '', statement: [], practice: [], sections: [] };
 	const SIZES = window.SIZES || {};
 	const page = document.body.dataset.page; // home | list | project | about
 	const params = new URLSearchParams(location.search);
@@ -17,18 +17,17 @@
 	const thumb = (name) => (isVideo(name) ? src(name) : 'thumbs/' + name + '.jpg');
 	const ratio = (name) => (SIZES[name] ? SIZES[name][0] / SIZES[name][1] : 16 / 9);
 	const link = (p) => 'project.html?p=' + p.slug;
-	const tagLink = (t) => 'list.html?tag=' + encodeURIComponent(t);
 	const plain = (html) => html.replace(/<[^>]+>/g, '');
 	const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+	const pills = (list) => `<ul class="pills">${list.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`;
+	// 标题逐字浮现：每个词包一层
+	const words = (text) => esc(text).split(/(\s+)/).map((w) => (w.trim() ? `<span class="w"><span>${w}</span></span>` : w)).join('');
 
-	// ---------- 视频：滚到眼前才加载、播放 ----------
+	// ---------- 图片和视频 ----------
 	const videoWatcher = new IntersectionObserver((entries) => {
 		entries.forEach(({ target: v, isIntersecting }) => {
 			if (isIntersecting) {
-				if (!v.getAttribute('src')) {
-					v.muted = true;
-					v.src = v.dataset.src;
-				}
+				if (!v.getAttribute('src')) { v.muted = true; v.src = v.dataset.src; }
 				v.play().catch(() => {});
 			} else {
 				v.pause();
@@ -37,61 +36,70 @@
 	}, { rootMargin: '300px' });
 
 	function media(name, { small = false } = {}) {
-		if (isVideo(name)) {
-			return `<video data-src="${src(name)}" muted loop playsinline preload="none"></video>`;
-		}
+		if (isVideo(name)) return `<video data-src="${src(name)}" muted loop playsinline preload="none"></video>`;
 		const size = SIZES[name] || [1600, 900];
 		return `<img src="${small ? thumb(name) : src(name)}" width="${size[0]}" height="${size[1]}" loading="lazy" decoding="async" alt="">`;
 	}
-	function watchVideos(root = document) {
-		$$('video[data-src]', root).forEach((v) => videoWatcher.observe(v));
-	}
 
-	// ---------- 页头 ----------
-	const nav = [
-		['Work', 'index.html', 'home'],
-		['Index', 'list.html', 'list'],
-		['About', 'about.html', 'about'],
+	// ---------- logo（logo.svg 里的内容直接放进页面，页脚可以变白） ----------
+	const LOGO = `<svg class="logo-svg" viewBox="48 20 110 34" role="img" aria-label="${esc(S.name)}"><text font-size="35.94" transform="translate(50.04 51.06)"><tspan x="0" y="0">Ha</tspan><tspan x="41.18" y="0" letter-spacing="-.01em">z</tspan><tspan x="57.68" y="0">el.</tspan></text><text font-size="10.41" transform="translate(138.39 32.5)">tao</text><ellipse cx="144.66" cy="29.63" rx="9.79" ry="6.8" fill="none" stroke="currentColor" stroke-width=".6"/></svg>`;
+
+	// ---------- 页头 + 黄色全屏菜单 ----------
+	const menuLinks = [
+		['projects', 'list.html'],
+		['about', 'about.html'],
+		['contact', 'mailto:' + S.email],
 	];
 	$('.site-header').innerHTML = `
-		<a class="logo" href="index.html">${esc(S.name)}</a>
-		<nav class="nav">
-			${nav.map(([label, href, key]) => `<a href="${href}"${(key === page || (key === 'home' && page === 'project')) ? ' aria-current="page"' : ''}>${label}</a>`).join('')}
-		</nav>
-		<span class="header-note">Graphic Design</span>
+		<a class="logo" href="index.html">${LOGO}</a>
+		<p class="tagline">graphic.<br>design.<br>point.</p>
+		<button class="menu-btn" aria-expanded="false" aria-controls="menu">Menu.</button>
 	`;
+	const menu = document.createElement('div');
+	menu.className = 'menu';
+	menu.id = 'menu';
+	menu.hidden = true;
+	menu.innerHTML = `
+		<div class="menu-top">
+			<a class="logo" href="index.html">${LOGO}</a>
+			<button class="menu-close" aria-label="Close menu">×</button>
+		</div>
+		<nav class="menu-links">
+			${menuLinks.map(([label, href]) => `<a href="${href}">${label}</a>`).join('')}
+		</nav>
+	`;
+	document.body.appendChild(menu);
+	const btn = $('.menu-btn');
+	const setMenu = (open) => {
+		menu.hidden = !open;
+		btn.setAttribute('aria-expanded', open);
+		document.documentElement.classList.toggle('menu-open', open);
+		requestAnimationFrame(() => menu.classList.toggle('open', open));
+	};
+	btn.addEventListener('click', () => setMenu(true));
+	$('.menu-close').addEventListener('click', () => setMenu(false));
+	document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
-	// ---------- 页脚 ----------
+	// ---------- 页脚（黑色） ----------
 	$('.site-footer').innerHTML = `
-		<a class="footer-big" href="list.html">Every project, in one index →</a>
-		<div class="footer-cols">
-			<div>
-				<h4>Contact</h4>
-				<p><a href="mailto:${S.email}">${esc(S.email)}</a></p>
-			</div>
-			<div>
-				<h4>Links</h4>
-				<p><a href="https://www.instagram.com/${S.instagram}/" target="_blank" rel="noopener">Instagram</a></p>
-			</div>
-			<div>
-				<h4>Now</h4>
-				<p>${S.now.map(esc).join('<br>')}</p>
-			</div>
-			<div>
-				<h4>${esc(S.city)}</h4>
-				<p class="clock">&nbsp;</p>
+		<div class="footer-top">
+			<p class="footer-tag">graphic.<br>design.<br>point.</p>
+			<div class="footer-info">
+				<p><a href="mailto:${S.email}">${esc(S.email)}</a><br><a href="https://www.instagram.com/${S.instagram}/" target="_blank" rel="noopener">Instagram.</a></p>
+				<p class="grey">${S.now.map(esc).join('<br>')}</p>
+				<p class="grey">${esc(S.city)}, <span class="clock"></span></p>
 			</div>
 		</div>
+		<a class="footer-badge" href="mailto:${S.email}" data-cursor="Say hi.">Contact.</a>
+		<div class="footer-logo">${LOGO}</div>
 		<div class="footer-base">
 			<span>© ${new Date().getFullYear()} ${esc(S.fullName)}</span>
-			<a href="#top" class="to-top">Back to top ↑</a>
+			<a href="#" class="to-top">Back to top.</a>
 		</div>
 	`;
 	const clock = $('.clock');
 	const tick = () => {
-		try {
-			clock.textContent = new Intl.DateTimeFormat('en-US', { timeZone: S.timezone, hour: 'numeric', minute: '2-digit' }).format(new Date());
-		} catch (e) {}
+		try { clock.textContent = new Intl.DateTimeFormat('en-US', { timeZone: S.timezone, hour: 'numeric', minute: '2-digit' }).format(new Date()); } catch (e) {}
 	};
 	tick();
 	setInterval(tick, 15000);
@@ -99,85 +107,84 @@
 
 	const main = $('.main');
 
-	// ---------- 首页：作品流（一张方图 + 一张横图，左右交替） ----------
+	// ---------- 首页 ----------
 	function renderHome() {
-		main.innerHTML = P.map((p, i) => {
-			const second = p.media.find((m) => m !== p.cover) || p.cover;
-			const sq = `<a class="frame sq" href="${link(p)}" aria-hidden="true" tabindex="-1">${media(second)}</a>`;
-			const rec = `<a class="frame rec" href="${link(p)}" aria-hidden="true" tabindex="-1">${media(p.cover)}</a>`;
-			return `
-				<article class="feed-item ${i % 2 ? 'flip' : ''}">
-					<div class="feed-head">
-						<h2><a href="${link(p)}">${esc(p.title)}</a></h2>
-						<ul class="tags">${p.tags.map((t) => `<li><a href="${tagLink(t)}">${esc(t)}</a></li>`).join('')}</ul>
-					</div>
-					<div class="feed-media">${i % 2 ? rec + sq : sq + rec}</div>
-				</article>`;
-		}).join('');
-		watchVideos(main);
+		const featured = P.slice(0, 4);
+		main.innerHTML = `
+			<section class="hero">
+				<h1 class="t-xl words">${words(A.headline.replace(' | ', ' ').replace('Student', 'student'))}</h1>
+				<a class="scroll-badge" href="#featured">Scroll.</a>
+			</section>
+			<section class="dark" id="featured">
+				<h2 class="t-xxl reveal">Selected projects.</h2>
+				<div class="featured">
+					${featured.map((p) => `
+						<article class="feat">
+							<div class="feat-text reveal">
+								<h3 class="t-l"><a href="${link(p)}">${esc(p.title)}</a></h3>
+								<p class="feat-sub">${esc(p.subtitle)}</p>
+								${pills(p.tags)}
+							</div>
+							<a class="feat-img" href="${link(p)}" data-cursor="View.">
+								<span class="arch">${media(p.cover)}</span>
+							</a>
+						</article>`).join('')}
+				</div>
+				<a class="all-link t-xxl reveal" href="list.html" data-cursor="View.">All projects.</a>
+			</section>
+		`;
+
+		// 滚动时图片慢慢变成拱形（上面两个角变圆）
+		const arches = $$('.feat-img');
+		const onScroll = () => {
+			const vh = innerHeight;
+			arches.forEach((el) => {
+				const r = el.getBoundingClientRect();
+				const t = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height * 0.4)));
+				el.style.setProperty('--arch', (t * 50).toFixed(2) + '%');
+			});
+		};
+		addEventListener('scroll', onScroll, { passive: true });
+		addEventListener('resize', onScroll);
+		onScroll();
 	}
 
-	// ---------- Index：可筛选的项目列表 ----------
+	// ---------- Projects：可筛选的错落网格 ----------
 	function renderList() {
-		const allTags = [...new Set(P.flatMap((p) => p.tags))].sort();
+		const counts = {};
+		P.forEach((p) => p.tags.forEach((t) => { counts[t] = (counts[t] || 0) + 1; }));
+		const allTags = Object.keys(counts).sort();
 		let active = params.get('tag') || '';
-		let query = '';
 		main.innerHTML = `
 			<section class="list-head">
-				<h1>Index</h1>
-				<p class="muted">${P.length} projects, ${P[P.length - 1].year}–${P[0].year}</p>
+				<h1 class="t-xl"><span class="words">${words('Twelve projects,')}</span><span class="right words">${words('one practice.')}</span></h1>
 			</section>
-			<section class="filters">
-				<div class="filter-label">Filter projects</div>
-				<div class="chips">
-					${allTags.map((t) => `<button class="chip" data-tag="${esc(t)}">${esc(t)} <span>×</span></button>`).join('')}
-				</div>
-				<input class="search" type="search" placeholder="Search" aria-label="Search projects">
+			<section class="filters reveal">
+				<button class="filter" data-tag="">All<sup>${P.length}</sup></button>
+				${allTags.map((t) => `<button class="filter" data-tag="${esc(t)}">${esc(t)}<sup>${counts[t]}</sup></button>`).join('')}
 			</section>
-			<div class="rows">
-				<div class="row row-labels"><span>Project</span><span>Discipline</span><span>Tags</span><span>Year</span></div>
+			<section class="grid">
 				${P.map((p) => `
-					<a class="row" href="${link(p)}" data-tags="${esc(p.tags.join('|'))}" data-text="${esc((p.title + ' ' + p.subtitle + ' ' + p.tags.join(' ') + ' ' + p.year).toLowerCase())}" data-cover="${esc(thumb(p.cover))}">
-						<span class="r-title">${esc(p.title)}</span>
-						<span>${esc(p.subtitle || '')}</span>
-						<span class="muted">${esc(p.tags.join(', '))}</span>
-						<span>${p.year}</span>
+					<a class="card reveal" href="${link(p)}" data-tags="${esc(p.tags.join('|'))}" data-cursor="View.">
+						<span class="card-img">${media(p.cover, { small: true })}</span>
+						<span class="card-title">${esc(p.title)}</span>
+						${pills([p.subtitle, String(p.year)])}
 					</a>`).join('')}
-				<p class="empty muted" hidden>No projects match.</p>
-			</div>
-			<img class="peek" alt="" hidden>
+			</section>
 		`;
 		const apply = () => {
-			$$('.chip').forEach((c) => c.classList.toggle('on', c.dataset.tag === active));
-			let shown = 0;
-			$$('.row[data-tags]').forEach((r) => {
-				const ok = (!active || r.dataset.tags.split('|').includes(active)) && (!query || r.dataset.text.includes(query));
-				r.hidden = !ok;
-				if (ok) shown++;
-			});
-			$('.empty').hidden = shown > 0;
+			$$('.filter').forEach((f) => f.classList.toggle('on', f.dataset.tag === active));
+			$$('.card').forEach((c) => { c.hidden = !!active && !c.dataset.tags.split('|').includes(active); });
+			$('.grid').classList.toggle('filtered', !!active);
 		};
-		$('.chips').addEventListener('click', (e) => {
-			const c = e.target.closest('.chip');
-			if (!c) return;
-			active = active === c.dataset.tag ? '' : c.dataset.tag;
+		$('.filters').addEventListener('click', (e) => {
+			const f = e.target.closest('.filter');
+			if (!f) return;
+			active = f.dataset.tag;
 			history.replaceState(null, '', active ? '?tag=' + encodeURIComponent(active) : location.pathname);
 			apply();
 		});
-		$('.search').addEventListener('input', (e) => { query = e.target.value.trim().toLowerCase(); apply(); });
 		apply();
-
-		// 鼠标停在一行上，旁边浮出封面小图
-		const peek = $('.peek');
-		if (matchMedia('(hover: hover)').matches) {
-			$$('.row[data-cover]').forEach((r) => {
-				r.addEventListener('mouseenter', () => { peek.src = r.dataset.cover; peek.hidden = false; });
-				r.addEventListener('mouseleave', () => { peek.hidden = true; });
-			});
-			main.addEventListener('mousemove', (e) => {
-				peek.style.transform = `translate(${e.clientX + 24}px, ${e.clientY - 80}px)`;
-			});
-		}
 	}
 
 	// ---------- 项目页 ----------
@@ -187,88 +194,119 @@
 		const next = P[(i + 1) % P.length];
 		document.title = plain(p.title) + ' — ' + S.name;
 
-		// 横图占满一行；竖图、方图两张并排
+		// 横图和视频占满一行；竖图、方图两张并排
+		const rest = p.media.filter((m) => m !== p.cover);
 		const rows = [];
 		let pair = [];
-		p.media.forEach((m) => {
-			if (isVideo(m) || ratio(m) >= 1.15) {
-				rows.push([m]);
-			} else {
+		rest.forEach((m) => {
+			if (isVideo(m) || ratio(m) >= 1.15) rows.push([m]);
+			else {
 				pair.push(m);
 				if (pair.length === 2) { rows.push(pair); pair = []; }
 			}
 		});
 		if (pair.length) rows.push(pair);
 
-		const meta = [
-			['Year', p.year],
-			['Discipline', p.subtitle],
-			['Services', p.services.join('<br>')],
-			p.format ? ['Format', esc(p.format)] : null,
-		].filter(Boolean);
-
+		const [lead, ...body] = p.text;
 		main.innerHTML = `
 			<section class="p-head">
-				<h1>${esc(p.title)}</h1>
-				<ul class="tags">${p.tags.map((t) => `<li><a href="${tagLink(t)}">${esc(t)}</a></li>`).join('')}</ul>
+				<h1 class="t-xxl words">${words(plain(p.title))}</h1>
+				<div class="p-head-row">
+					<p class="p-sub">${esc(p.subtitle)}.</p>
+					${pills(p.tags)}
+				</div>
 			</section>
 			<section class="p-intro">
-				<dl class="p-meta">
-					${meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}
-				</dl>
-				<div class="p-text">
-					${p.text.map((t) => `<p>${t}</p>`).join('')}
-					${p.credits ? `<p class="credits muted">${esc(p.credits)}</p>` : ''}
+				<figure class="p-cover reveal">${media(p.cover)}</figure>
+				<div class="p-text reveal">
+					<p class="p-lead">${lead}</p>
+					${body.map((t) => `<p>${t}</p>`).join('')}
+					<dl class="p-meta">
+						<div><dt>Year</dt><dd>${p.year}</dd></div>
+						<div><dt>Services</dt><dd>${p.services.map(esc).join('<br>')}</dd></div>
+						${p.format ? `<div><dt>Format</dt><dd>${esc(p.format)}</dd></div>` : ''}
+					</dl>
+					${p.credits ? `<p class="credits">${esc(p.credits)}</p>` : ''}
 				</div>
 			</section>
 			<section class="p-media">
-				${rows.map((r) => `<div class="m-row m-${r.length}${r.length === 1 && !isVideo(r[0]) && ratio(r[0]) < 1.15 ? ' m-single' : ''}">${r.map((m) => `<figure class="zoomable">${media(m)}</figure>`).join('')}</div>`).join('')}
+				${rows.map((r) => `<div class="m-row m-${r.length}">${r.map((m) => `<figure class="reveal">${media(m)}</figure>`).join('')}</div>`).join('')}
 			</section>
-			<section class="p-next">
-				<div class="filter-label">Next project</div>
-				<a href="${link(next)}" class="next-link">
-					<span class="next-title">${esc(next.title)} →</span>
+			<section class="dark p-next">
+				<p class="label">Next project.</p>
+				<a class="next" href="${link(next)}" data-cursor="View.">
+					<span class="next-text">
+						<span class="t-xl">${esc(next.title)}</span>
+						${pills(next.tags)}
+					</span>
 					<span class="next-img">${media(next.cover, { small: true })}</span>
 				</a>
+				<a class="all-link t-xxl" href="list.html" data-cursor="View.">All projects.</a>
 			</section>
 		`;
-		watchVideos(main);
-
-		// 点击图片放大
-		const box = document.createElement('div');
-		box.className = 'lightbox';
-		box.hidden = true;
-		document.body.appendChild(box);
-		main.addEventListener('click', (e) => {
-			const img = e.target.closest('.zoomable img');
-			if (!img) return;
-			box.innerHTML = `<img src="${img.getAttribute('src')}" alt="">`;
-			box.hidden = false;
-		});
-		box.addEventListener('click', () => { box.hidden = true; });
-		document.addEventListener('keydown', (e) => { if (e.key === 'Escape') box.hidden = true; });
 	}
 
 	// ---------- About ----------
 	function renderAbout() {
 		main.innerHTML = `
 			<section class="about-head">
-				<h1>${esc(S.fullName)}</h1>
-				<p class="about-lede">${A.headline}</p>
+				<p class="about-kicker">About.</p>
+				<h1 class="t-xl statement">${A.statement.map((l, n) => `<span class="${n % 2 ? 'right' : ''} words">${words(l)}</span>`).join('')}</h1>
 			</section>
-			<section class="about-grid">
-				${A.sections.map((s) => `
-					<div class="about-block">
-						<h4>${esc(s.label)}</h4>
-						<p>${s.lines.map((l) => l || '<span class="gap"></span>').join('<br>')}</p>
-					</div>`).join('')}
-				<div class="about-block">
-					<h4>Last Updated</h4>
-					<p class="muted">${esc(S.updated)}</p>
+			<section class="yellow">
+				<div class="cards">
+					${A.sections.map((s) => `
+						<div class="info-card reveal">
+							<h2 class="t-m">${esc(s.label)}.</h2>
+							<p>${s.lines.map((l) => l || '<span class="gap"></span>').join('<br>')}</p>
+						</div>`).join('')}
+					<div class="info-card reveal">
+						<h2 class="t-m">Last updated.</h2>
+						<p>${esc(S.updated)}</p>
+					</div>
 				</div>
+			</section>
+			<section class="dark practice">
+				<p class="label">What I do.</p>
+				<p class="t-l reveal">${esc(A.practice[0] || '')} <span class="grey">${esc(A.practice[1] || '')}</span></p>
 			</section>
 		`;
 	}
 
 	({ home: renderHome, list: renderList, project: renderProject, about: renderAbout }[page] || renderHome)();
+
+	// ---------- 视频开始观察 ----------
+	$$('video[data-src]').forEach((v) => videoWatcher.observe(v));
+
+	// ---------- 滚动浮现 ----------
+	const revealer = new IntersectionObserver((entries) => {
+		entries.forEach((e) => {
+			if (e.isIntersecting) { e.target.classList.add('in'); revealer.unobserve(e.target); }
+		});
+	}, { rootMargin: '0px 0px -8% 0px' });
+	$$('.reveal, .words').forEach((el) => revealer.observe(el));
+
+	// ---------- 黄色光标（只在有鼠标的设备上） ----------
+	if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+		const cur = document.createElement('div');
+		cur.className = 'cursor';
+		cur.innerHTML = '<span></span>';
+		document.body.appendChild(cur);
+		const label = cur.firstChild;
+		let x = -100, y = -100, cx = x, cy = y;
+		addEventListener('mousemove', (e) => {
+			x = e.clientX; y = e.clientY;
+			const t = e.target.closest('[data-cursor]');
+			cur.classList.toggle('big', !!t);
+			if (t) label.textContent = t.dataset.cursor;
+		});
+		document.addEventListener('mouseleave', () => cur.classList.add('gone'));
+		document.addEventListener('mouseenter', () => cur.classList.remove('gone'));
+		const loop = () => {
+			cx += (x - cx) * 0.2; cy += (y - cy) * 0.2;
+			cur.style.transform = `translate(${cx}px, ${cy}px)`;
+			requestAnimationFrame(loop);
+		};
+		loop();
+	}
 })();

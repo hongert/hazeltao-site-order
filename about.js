@@ -3,6 +3,10 @@
 
 window.ABOUT = {
 	headline: 'MFA Graphic Design | Student at ArtCenter College of Design.',
+	// About 页的大字，每行左右交替排
+	statement: ['Honger (Hazel) Tao,', 'MFA Graphic Design', 'student at ArtCenter', 'College of Design.'],
+	// 黑色区域的一段话：前半句黑底白字，后半句灰色
+	practice: ['Identity, typography, editorial and print.', 'Packaging, risograph, illustration, motion and spatial work.'],
 	sections: [
 		{
 			label: 'Contact',
