@@ -161,8 +161,8 @@ window.PROJECTS = [
 		tags: ['Illustration'],
 		services: ['Illustration', 'Album Art'],
 		format: '',
-		cover: 'FINALp1-copy.png',
-		media: ['FINALp1-copy.png', 'FINALp3.png', 'FINALp4.jpg', 'FINALp5-copy.png'],
+		cover: 'PiedPiper_vinyl_display.jpg',
+		media: ['PiedPiper_vinyl_display.jpg', 'FINALp1-copy.png', 'FINALp3.png', 'FINALp4.jpg', 'FINALp5-copy.png'],
 		text: [
 			'<i>Pied Piper</i> creates a cohesive visual system for a Red Velvet-inspired album by illustrating a storyline based on key lyrics from five selected songs: “Cosmic,” “Peek-A-Boo,” “Bad Boy,” “Russian Roulette,” and “Feel My Rhythm.” Drawing from a personal concept of two contrasting realms—the gray, numbing Old World and the vibrant, dreamlike New World—the five illustrations visually narrate a transformation. Through symbolic imagery and evolving color palettes, the project shows Red Velvet’s members breaking through the bleakness, seducing the inhabitants into a utopia, and ultimately blending the two worlds into one cohesive vision.',
 		],
