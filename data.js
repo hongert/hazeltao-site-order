@@ -240,6 +240,6 @@ window.PROJECTS = [
 window.FEATURED = [
 	{ slug: 'arboretum', image: 'Screenshot-2026-02-13-at-11.32.01AM.png' },
 	{ slug: 'held-still', image: 'HeldStill_Flag.jpg' },
-	{ slug: 'serenseek', image: 'Serenseek_glass_sign.jpg' },
+	{ slug: 'wuzhen-theater-festival', image: 'Wuzhen_flag_display.png' },
 	{ slug: 'huayings-recipe', image: 'Huaying_calendar_display_2.jpg' },
 ];
