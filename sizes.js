@@ -1,9 +1,8 @@
 // 图片尺寸（宽/高），用于网格排版。新加图片可以不写，会按横图处理
 window.SIZES = {
 	'Wuzhen_flag_display.png': [4000, 2667],
-	'PiedPiper_vinyl_display.jpg': [2000, 1333],
-	'Serenseek_glass_sign.jpg': [1333, 2000],
-	'Huaying_calendar_display_2.jpg': [2000, 1241],
+	'PiedPiper_vinyl_display.png': [3750, 2500],
+	'Huaying_calendar_display_3.png': [6000, 3725],
 	'1771977244038-086e7f39-f791-4595-a5f4-bbad5819a0a6_10.jpg': [1024, 512],
 	'1771977244038-086e7f39-f791-4595-a5f4-bbad5819a0a6_11.jpg': [1024, 512],
 	'1771977244038-086e7f39-f791-4595-a5f4-bbad5819a0a6_12.jpg': [1024, 512],
