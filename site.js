@@ -42,7 +42,7 @@
 	}
 
 	// ---------- logo（logo.svg 里的内容直接放进页面，页脚可以变白） ----------
-	const LOGO = `<svg class="logo-svg" viewBox="48 20 110 34" role="img" aria-label="${esc(S.name)}"><text font-size="35.94" transform="translate(50.04 51.06)"><tspan x="0" y="0">Ha</tspan><tspan x="41.18" y="0" letter-spacing="-.01em">z</tspan><tspan x="57.68" y="0">el.</tspan></text><text font-size="10.41" transform="translate(138.39 32.5)">tao</text><ellipse cx="144.66" cy="29.63" rx="9.79" ry="6.8" fill="none" stroke="currentColor" stroke-width=".6"/></svg>`;
+	const LOGO = `<svg class="logo-svg" viewBox="48 20 126 34" role="img" aria-label="${esc(S.name)}"><text font-size="35.94" x="50.04" y="51.06">Hazel.</text><text font-size="10.41" x="154.5" y="32.5">tao</text><ellipse cx="162.24" cy="29.63" rx="9.79" ry="6.8" fill="none" stroke="currentColor" stroke-width=".6"/></svg>`;
 
 	// ---------- 页头 + 黄色全屏菜单 ----------
 	const menuLinks = [
@@ -134,14 +134,16 @@
 			</section>
 		`;
 
-		// 滚动时图片慢慢变成拱形（上面两个角变圆）
-		const arches = $$('.feat-img');
+		// 滚动时图片慢慢收成一个完整的圆形
+		const arches = $$('.feat-img .arch');
 		const onScroll = () => {
 			const vh = innerHeight;
 			arches.forEach((el) => {
 				const r = el.getBoundingClientRect();
-				const t = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height * 0.4)));
-				el.style.setProperty('--arch', (t * 50).toFixed(2) + '%');
+				const t = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.75)));
+				const side = Math.min(r.width, r.height);
+				const ix = t * (r.width - side) / 2, iy = t * (r.height - side) / 2;
+				el.style.clipPath = `inset(${iy.toFixed(1)}px ${ix.toFixed(1)}px round ${(t * side / 2).toFixed(1)}px)`;
 			});
 		};
 		addEventListener('scroll', onScroll, { passive: true });
