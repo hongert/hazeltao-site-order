@@ -147,8 +147,8 @@ window.PROJECTS = [
 		tags: ['Print', 'Illustration'],
 		services: ['Calendar', 'Illustration', 'Print Design'],
 		format: '',
-		cover: 'FINALp1.jpg',
-		media: ['FINALp1.jpg', 'FINALp2-03.png', 'FINALp2-04.png'],
+		cover: 'Huaying_main.png',
+		media: ['Huaying_main.png', 'FINALp1.jpg', 'FINALp2-03.png', 'FINALp2-04.png'],
 		text: [
 			'<i>Huaying’s Recipe</i> is a project that deeply personal tribute to my grandmother and the cherished memories of cooking with her throughout my childhood. Inspired by the calendar she kept on her living room wall, I created a functional and decorative gift that reflects both my love for her and my growth as a designer. Each month features a dish from her recipes, thoughtfully paired with seasonal ingredients or traditional celebrations. The calendar is accordion-bound to enhance display and accessibility, with each month spanning two pages: one showcasing a stylized serving dish illustration, and the other presenting the month’s dates and festivals.',
 		],
@@ -241,5 +241,5 @@ window.FEATURED = [
 	{ slug: 'arboretum', image: 'Screenshot-2026-02-13-at-11.32.01AM.png' },
 	{ slug: 'held-still', image: 'HeldStill_Flag.jpg' },
 	{ slug: 'wuzhen-theater-festival', image: 'Wuzhen_flag_display.png' },
-	{ slug: 'huayings-recipe', image: 'Huaying_calendar_display_3.png' },
+	{ slug: 'huayings-recipe', image: 'Huaying_main.png' },
 ];

@@ -2,7 +2,7 @@
 window.SIZES = {
 	'Wuzhen_flag_display.png': [4000, 2667],
 	'PiedPiper_vinyl_display.png': [3750, 2500],
-	'Huaying_calendar_display_3.png': [6000, 3725],
+	'Huaying_main.png': [6000, 4000],
 	'1771977244038-086e7f39-f791-4595-a5f4-bbad5819a0a6_10.jpg': [1024, 512],
 	'1771977244038-086e7f39-f791-4595-a5f4-bbad5819a0a6_11.jpg': [1024, 512],
 	'1771977244038-086e7f39-f791-4595-a5f4-bbad5819a0a6_12.jpg': [1024, 512],
