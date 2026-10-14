@@ -227,7 +227,7 @@
 					${body.map((t) => `<p>${t}</p>`).join('')}
 					<dl class="p-meta">
 						<div><dt>Year</dt><dd>${p.year}</dd></div>
-						<div><dt>Services</dt><dd>${p.services.map(esc).join('<br>')}</dd></div>
+						<div><dt>Deliverables</dt><dd>${p.services.map(esc).join('<br>')}</dd></div>
 						${p.format ? `<div><dt>Format</dt><dd>${esc(p.format)}</dd></div>` : ''}
 					</dl>
 					${p.credits ? `<p class="credits">${esc(p.credits)}</p>` : ''}
